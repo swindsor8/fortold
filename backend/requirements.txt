@@ -9,10 +9,12 @@ alembic==1.14.0
 
 # Auth
 passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
 python-jose[cryptography]==3.3.0
 
 # Validation + settings
 pydantic==2.10.3
+pydantic[email]==2.10.3
 pydantic-settings==2.6.1
 python-multipart==0.0.18
 

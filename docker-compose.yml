@@ -1,23 +1,4 @@
-version: "3.9"
-
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-fortold}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fortold_dev}
-      POSTGRES_DB: ${POSTGRES_DB:-fortold_db}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fortold} -d ${POSTGRES_DB:-fortold_db}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -44,8 +25,6 @@ services:
       - uploads_data:/app/uploads
       - artifacts_data:/app/artifacts
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -61,8 +40,6 @@ services:
       - uploads_data:/app/uploads
       - artifacts_data:/app/artifacts
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
     command: rq worker --url ${REDIS_URL:-redis://redis:6379} fortold_queue
@@ -85,7 +62,6 @@ services:
     command: npm run dev
 
 volumes:
-  postgres_data:
   redis_data:
   uploads_data:
   artifacts_data:
